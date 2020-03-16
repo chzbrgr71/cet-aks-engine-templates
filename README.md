@@ -1,1 +1,2 @@
-# cet-aks-engine-templates
+## aks-engine sample templates
+
