@@ -1,0 +1,115 @@
+{
+	"apiVersion": "vlabs",
+	"properties": {
+		"orchestratorProfile": {
+			"orchestratorType": "Kubernetes",
+			"orchestratorVersion": "1.15.10",
+			"kubernetesConfig": {
+				"networkPolicy": "calico",
+				"networkPlugin": "kubenet",
+				"controllerManagerConfig": {
+					"--horizontal-pod-autoscaler-sync-period": "30s",
+					"--horizontal-pod-autoscaler-downscale-stabilization": "30m",
+					"--horizontal-pod-autoscaler-use-rest-clients": "true"
+				},
+				"kubeletConfig": {
+					"--max-pods": "110",
+					"--authentication-token-webhook": "true",
+					"--authorization-mode": "Webhook",
+					"--kube-reserved-cgroup": "/kube-reserved",
+					"--system-reserved-cgroup": "/system-reserved",
+					"--eviction-hard": "memory.available<512Mi,nodefs.available<10%,nodefs.inodesFree<5%,imagefs.available<10%,imagefs.inodesFree<5%",
+					"--system-reserved": "cpu=200m,memory=512Mi",
+					"--kube-reserved": "cpu=200m,memory=512Mi"
+				},
+				"apiServerConfig": {
+					"--runtime-config": "batch/v2alpha1=true,autoscaling/v2beta1=true",
+					"--audit-log-maxage": "10",
+					"--audit-log-maxbackup": "1",
+					"--audit-log-maxsize": "100",
+					"--admission-control":  "NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota,DenyEscalatingExec,AlwaysPullImages,ValidatingAdmissionWebhook,ResourceQuota"
+				},
+				"serviceCidr": "10.2.0.0/16",
+				"dnsServiceIP": "10.2.0.10",
+				"outboundRuleIdleTimeoutInMinutes": 10,
+				"addons": [
+					{
+						"name": "cluster-autoscaler",
+						"enabled": true,
+						"mode": "EnsureExists",
+						"pools": [
+							{
+								"name": "agentpool1",
+								"config": {
+									"min-nodes": "1",
+									"max-nodes": "15"
+								}
+							}
+						],
+						"config": {
+							"scan-interval": "1m",
+							"scale-down-enabled": "true",
+							"scale-down-unneeded-time": "5m0s",
+							"scale-down-utilization-threshold": "0.95",
+							"skip-nodes-with-local-storage": "false",
+							"stderrthreshold": "info"
+						}
+					},
+					{
+						"name": "kube-dns",
+						"enabled" : true
+					},
+					{
+						"name": "coredns",
+						"enabled" : false
+					}
+				]
+			}
+		},
+		"masterProfile": {
+			"count": 1,
+			"vmSize": "Standard_F16s_v2",
+			"storageProfile": "ManagedDisks",
+			"dnsPrefix": "k8scluster",
+			"vnetCidr": "10.0.0.0/16",
+			"vnetSubnetId": "/subscriptions/a78dd489-44b4-47b4-8595-772d81f749ae/resourceGroups/k8scluster/providers/Microsoft.Network/virtualNetworks/k8sclustervnet/subnets/default",
+			"firstConsecutiveStaticIP": "10.0.255.240",
+			"OSDiskSizeGB": 60,
+			"availabilityZones": [
+				"1",
+				"2",
+				"3"
+			]
+		},
+		"agentPoolProfiles": [
+			{
+				"name": "agentpool1",
+				"count": 1,
+				"vnetSubnetId": "/subscriptions/a78dd489-44b4-47b4-8595-772d81f749ae/resourceGroups/k8scluster/providers/Microsoft.Network/virtualNetworks/k8sclustervnet/subnets/default",
+				"vmSize": "Standard_F16s_v2",
+				"storageProfile": "ManagedDisks",
+				"availabilityProfile": "VirtualMachineScaleSets",
+				"OSDiskSizeGB": 600,
+				"availabilityZones": [
+					"1",
+					"2",
+					"3"
+				]
+			}
+		],
+		"linuxProfile": {
+			"adminUsername": "azureuser",
+			"ssh": {
+				"publicKeys": [
+					{
+						"keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAgEA2WaNIG5N0GPGmGbiQbr2O7sIai2nf56AqmQG9/xYQ+7mtx43D7y/sJyvk6zUIHC0l9jVBUwdfVTfVG+wC8k9rCEIdaYSi/ZnasglrJsBdRVmx85Ue2AieDvI6YE+6gThFL/32dvgAIwAPQMK7mPTRa/JGmWVqJX1gEIuqcj7RSXVTzZ47TCpZnFPQEY6tgs2kJcP9rvzpiCz/SRpyjw+L4CC8wHSZBZKOlFc2AHQS9Y2eaWjBNc3DGIidvOH/A19uCIFZcz27deEdtQAo4RWizhcyXerm5XbmdYsXDAadmU+K06JLWGfpEjFMKr16nwBzIxHk2k7XL0BL6JAgCLS+jWw8LR+S3FrCkFyTZe55+Z2oGh/m6zDsytghafUlrDXNYnPRz9wzgXmiP+8YdM6YyMFuZPMq2SxQMchjsBrJWPprLfnTPr3hbCpO9ZOQD8PIZU3AIWcCsx9UP+TE9Mmnk2Tsy3tXXx7MBr/iliwZZzN4+byRsmKncT98g+rCfwVTwTFIPOya2cmMmiE1IG2VH0qNkOjLGqh9nrGQjeaboVoW7TxOIQ3tD/4BwR5pST20+yznHoBWGILtysv8/J958xgyr5myis93b4bse63vgepSpDUipdDQkrImNKqnyQmi5eoWWn1Sd+6HvrdpHUUNKtuc5pgud/nlXKuNNX8938="
+					}
+				]
+			}
+		},
+		"servicePrincipalProfile": {
+			"clientId": "",
+			"secret": ""
+		}
+	}
+}
