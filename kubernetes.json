@@ -68,12 +68,12 @@
 		},
 		"masterProfile": {
 			"count": 1,
-			"vmSize": "Standard_F16s_v2",
+			"vmSize": "Standard_D2_v2",
 			"storageProfile": "ManagedDisks",
-			"dnsPrefix": "k8scluster",
-			"vnetCidr": "10.0.0.0/16",
-			"vnetSubnetId": "/subscriptions/a78dd489-44b4-47b4-8595-772d81f749ae/resourceGroups/k8scluster/providers/Microsoft.Network/virtualNetworks/k8sclustervnet/subnets/default",
-			"firstConsecutiveStaticIP": "10.0.255.240",
+			"dnsPrefix": "jkc-k8scluster2",
+			"vnetCidr": "10.238.0.0/16",
+			"vnetSubnetId": "/subscriptions/acb3aaa4-a981-4fab-8476-e38eb0f7761a/resourceGroups/clarovideo/providers/Microsoft.Network/virtualNetworks/claro-vnet/subnets/workerSubnet",
+			"firstConsecutiveStaticIP": "10.238.255.240",
 			"OSDiskSizeGB": 60,
 			"availabilityZones": [
 				"1",
@@ -85,8 +85,8 @@
 			{
 				"name": "agentpool1",
 				"count": 1,
-				"vnetSubnetId": "/subscriptions/a78dd489-44b4-47b4-8595-772d81f749ae/resourceGroups/k8scluster/providers/Microsoft.Network/virtualNetworks/k8sclustervnet/subnets/default",
-				"vmSize": "Standard_F16s_v2",
+				"vnetSubnetId": "/subscriptions/acb3aaa4-a981-4fab-8476-e38eb0f7761a/resourceGroups/clarovideo/providers/Microsoft.Network/virtualNetworks/claro-vnet/subnets/workerSubnet",
+				"vmSize": "Standard_D2_v2",
 				"storageProfile": "ManagedDisks",
 				"availabilityProfile": "VirtualMachineScaleSets",
 				"OSDiskSizeGB": 600,
@@ -108,8 +108,8 @@
 			}
 		},
 		"servicePrincipalProfile": {
-			"clientId": "",
-			"secret": ""
+			"clientId": "d9f28f98-ffc5-4cdc-8eb8-90b5faf0cf77",
+			"secret": "57f6aca6-1b09-457c-af9c-adc216b55286"
 		}
 	}
 }

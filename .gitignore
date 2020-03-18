@@ -3,6 +3,10 @@
 .vscode
 **/.vscode
 
+# AKS-Engine
+_output/
+translations/
+
 # Logs
 logs
 *.log
