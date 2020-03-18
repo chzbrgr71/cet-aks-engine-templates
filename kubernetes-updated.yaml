@@ -29,8 +29,6 @@
 					"--audit-log-maxsize": "100",
 					"--admission-control":  "NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota,DenyEscalatingExec,AlwaysPullImages,ValidatingAdmissionWebhook,ResourceQuota"
 				},
-				"serviceCidr": "10.2.0.0/16",
-				"dnsServiceIP": "10.2.0.10",
 				"outboundRuleIdleTimeoutInMinutes": 10,
 				"addons": [
 					{
@@ -70,10 +68,8 @@
 			"count": 1,
 			"vmSize": "Standard_F16s_v2",
 			"storageProfile": "ManagedDisks",
-			"dnsPrefix": "k8scluster",
-			"vnetCidr": "10.0.0.0/16",
-			"vnetSubnetId": "/subscriptions/qqqqq/resourceGroups/k8scluster/providers/Microsoft.Network/virtualNetworks/k8sclustervnet/subnets/default",
-			"firstConsecutiveStaticIP": "10.0.255.240",
+			"vnetSubnetId": "/subscriptions/qqqqq/resourceGroups/virtual-networks/providers/Microsoft.Network/virtualNetworks/cluster-vnet/subnets/node-subnet",
+			"firstConsecutiveStaticIP": "10.100.0.10",
 			"OSDiskSizeGB": 60,
 			"availabilityZones": [
 				"1",
@@ -85,7 +81,7 @@
 			{
 				"name": "agentpool1",
 				"count": 1,
-				"vnetSubnetId": "/subscriptions/qqqqq/resourceGroups/k8scluster/providers/Microsoft.Network/virtualNetworks/k8sclustervnet/subnets/default",
+				"vnetSubnetId": "/subscriptions/qqqqq/resourceGroups/virtual-networks/providers/Microsoft.Network/virtualNetworks/cluster-vnet/subnets/node-subnet",
 				"vmSize": "Standard_F16s_v2",
 				"storageProfile": "ManagedDisks",
 				"availabilityProfile": "VirtualMachineScaleSets",

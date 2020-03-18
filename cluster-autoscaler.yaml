@@ -1,0 +1,142 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  generation: 1
+  labels:
+    addonmanager.kubernetes.io/mode: EnsureExists
+    app: cluster-autoscaler
+    kubernetes.io/cluster-service: "true"
+  name: cluster-autoscaler
+  namespace: kube-system
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: cluster-autoscaler
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: cluster-autoscaler
+    spec:
+      containers:
+      - command:
+        - ./cluster-autoscaler
+        - --logtostderr=true
+        - --cloud-provider=azure
+        - --skip-nodes-with-local-storage=false
+        - --scan-interval=1m
+        - --expendable-pods-priority-cutoff=-10
+        - --ignore-daemonsets-utilization=false
+        - --ignore-mirror-pods-utilization=false
+        - --max-autoprovisioned-node-group-count=15
+        - --max-empty-bulk-delete=10
+        - --max-failing-time=15m0s
+        - --max-graceful-termination-sec=600
+        - --max-inactivity=10m0s
+        - --max-node-provision-time=15m0s
+        - --max-nodes-total=0
+        - --max-total-unready-percentage=45
+        - --memory-total=0:6400000
+        - --min-replica-count=0
+        - --namespace=kube-system
+        - --new-pod-scale-up-delay=0s
+        - --node-autoprovisioning-enabled=false
+        - --ok-total-unready-count=3
+        - --scale-down-candidates-pool-min-count=50
+        - --scale-down-candidates-pool-ratio=0.1
+        - --scale-down-delay-after-add=10m0s
+        - --scale-down-delay-after-delete=1m
+        - --scale-down-delay-after-failure=3m0s
+        - --scale-down-enabled=true
+        - --scale-down-non-empty-candidates-count=30
+        - --scale-down-unneeded-time=5m0s
+        - --scale-down-unready-time=20m0s
+        - --scale-down-utilization-threshold=0.95
+        - --skip-nodes-with-local-storage=false
+        - --skip-nodes-with-system-pods=true
+        - --stderrthreshold=info
+        - --unremovable-node-recheck-timeout=5m0s
+        - --v=3
+        - --write-status-configmap=true
+        - --balance-similar-node-groups=true
+        - --nodes=1:15:k8s-agentpool1-19133377-vmss
+        env:
+        - name: ARM_CLOUD
+          value: AzurePublicCloud
+        - name: ARM_SUBSCRIPTION_ID
+          valueFrom:
+            secretKeyRef:
+              key: SubscriptionID
+              name: cluster-autoscaler-azure
+        - name: ARM_RESOURCE_GROUP
+          valueFrom:
+            secretKeyRef:
+              key: ResourceGroup
+              name: cluster-autoscaler-azure
+        - name: ARM_TENANT_ID
+          valueFrom:
+            secretKeyRef:
+              key: TenantID
+              name: cluster-autoscaler-azure
+        - name: ARM_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              key: ClientID
+              name: cluster-autoscaler-azure
+        - name: ARM_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: ClientSecret
+              name: cluster-autoscaler-azure
+        - name: ARM_VM_TYPE
+          valueFrom:
+            secretKeyRef:
+              key: VMType
+              name: cluster-autoscaler-azure
+        - name: ARM_USE_MANAGED_IDENTITY_EXTENSION
+          value: "false"
+        image: k8s.gcr.io/cluster-autoscaler:v1.15.4
+        imagePullPolicy: IfNotPresent
+        name: cluster-autoscaler
+        resources:
+          limits:
+            cpu: 100m
+            memory: 300Mi
+          requests:
+            cpu: 100m
+            memory: 300Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /etc/ssl/certs/ca-certificates.crt
+          name: ssl-certs
+          readOnly: true
+      dnsPolicy: ClusterFirst
+      nodeSelector:
+        beta.kubernetes.io/os: linux
+        kubernetes.io/role: master
+      priorityClassName: system-node-critical
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: cluster-autoscaler
+      serviceAccountName: cluster-autoscaler
+      terminationGracePeriodSeconds: 30
+      tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/master
+        operator: Equal
+        value: "true"
+      volumes:
+      - hostPath:
+          path: /etc/ssl/certs/ca-certificates.crt
+          type: ""
+        name: ssl-certs
