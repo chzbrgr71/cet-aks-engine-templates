@@ -23,7 +23,7 @@ aks-engine deploy \
     --dns-prefix $CLUSTERNAME \
     --resource-group $RGNAME \
     --location $LOCATION \
-    --api-model kubernetes-updated.json \
+    --api-model kubernetes-br.json \
     --client-id $CLIENTID \
     --client-secret $CLIENTSECRET \
     --force-overwrite
@@ -48,8 +48,28 @@ kubectl apply -f nginx.yaml
 
 kubectl scale deployment nginx --replicas=5
 kubectl scale deployment nginx --replicas=1000
+
+kubectl scale deployment mysql-deployment --replicas=2
 ```
 
+### Istio
 
+https://istio.io/docs/setup/getting-started 
 
+```bash
+curl -L https://istio.io/downloadIstio | sh -
+
+istioctl version --remote=false
+
+istioctl manifest apply --set profile=demo
+
+# sample app
+kubectl create ns bookinfo
+kubectl label namespace bookinfo istio-injection=enabled
+kubectl apply -f /Users/brianredmond/source/istio-1.4.5/samples/bookinfo/platform/kube/bookinfo.yaml -n bookinfo
+
+kubectl apply -f /Users/brianredmond/source/istio-1.4.5/samples/bookinfo/networking/bookinfo-gateway.yaml -n bookinfo
+
+kubectl get svc istio-ingressgateway -n istio-system
+```
 

@@ -1,3 +1,0 @@
-mysql:
-    # 'root' encoded in base64
-    root: cm9vdA==

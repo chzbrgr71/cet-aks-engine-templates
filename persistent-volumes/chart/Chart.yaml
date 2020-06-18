@@ -1,9 +1,0 @@
-apiVersion: v2
-name: pvdemo
-description: This chart deploys a pod with a MySQL instance to test data persistence across pods
-
-type: application
-
-version: 1.0.0
-
-appVersion: 1.16.0
